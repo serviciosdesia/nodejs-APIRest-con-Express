@@ -9,16 +9,17 @@ const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
-const whitelist = ['http://127.0.0.1:5500/frontend.html', 'http://localhost:8080', 'https://myapp.co'];
+const whitelist = ['http://localhost:5500', 'http://127.0.0.1:5500'];
 const options = {
   origin: (origin, callback) => {
-    if (whitelist.includes(origin)) {
-      callback(null, true);
-    }else{
+    if (whitelist.indexOf(origin) === -1) {
       callback(new Error('No permitido'));
     }
+    callback(null, true);
   }
 }
+
+app.use(cors(options));
 
 app.get('/api', (req, res) => {
   res.send('Hola mi server en express');
@@ -29,9 +30,6 @@ app.get('/api/nueva-ruta', (req, res) => {
 })
 
 routerApi(app);
-app.use(cors(options));
-
-
 
 app.use(logErrors);
 app.use(boomErrorHandler);
